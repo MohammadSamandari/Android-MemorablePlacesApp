@@ -146,6 +146,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             //  Notifing the user that the place has been added.
             Toast.makeText(this, "New Place Has Been Added", Toast.LENGTH_SHORT).show();
 
+            //  Updating Shared Preferences. Saving new Information into shared preferences.
+            MainActivity.sharedPreferences.edit().putString("memorablePlacesNames",ObjectSerializer.serialize(MainActivity.memorablePlacesNames)).apply();
+            MainActivity.sharedPreferences.edit().putString("memorablePlacesLat",ObjectSerializer.serialize(MainActivity.memorablePlacesLat)).apply();
+            MainActivity.sharedPreferences.edit().putString("memorablePlacesLng",ObjectSerializer.serialize(MainActivity.memorablePlacesLng)).apply();
+
             //  Closing the Map Activity
             finish();
 

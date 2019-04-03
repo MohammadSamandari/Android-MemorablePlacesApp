@@ -1,14 +1,17 @@
 package com.mohammadsamandari.memorableplacesapp;
 
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
+import java.io.IOException;
 import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
@@ -24,17 +27,35 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        //  Defining Shared Preferences
-
-
         //  Defining the array list, giving it the first defualt item.
         memorablePlacesNames = new ArrayList<String>();
         memorablePlacesLat = new ArrayList<String>();
         memorablePlacesLng = new ArrayList<String>();
 
-        memorablePlacesNames.add("Add a new place . . .");
-        memorablePlacesLat.add("0");
-        memorablePlacesLng.add("0");
+        //  Defining Shared Preferences
+        sharedPreferences=this.getSharedPreferences("memorablePlaces", Context.MODE_PRIVATE);
+
+        //  Checking to see it's the first time app is running our not
+        if(!sharedPreferences.contains("memorablePlacesNames")){
+            //  it is the first time running the app, so we are going to prepare the arraylists for the first run
+            Log.i("Lord-SharedPreferences","First Time Running App, Creating new arraylists.");
+            memorablePlacesNames.add("Add a new place . . .");
+            memorablePlacesLat.add("0");
+            memorablePlacesLng.add("0");
+        }else{
+            //  populating the arraylists with the information saved on the shared preferences.
+            Log.i("Lord-SharedPreferences","Existing Shared Preferences, Loarding data from shared preferences.");
+            try {
+                memorablePlacesNames=
+                        (ArrayList<String>) ObjectSerializer.deserialize(sharedPreferences.getString("memorablePlacesNames",ObjectSerializer.serialize(new ArrayList<String>())));
+                memorablePlacesLat=
+                        (ArrayList<String>) ObjectSerializer.deserialize(sharedPreferences.getString("memorablePlacesLat",ObjectSerializer.serialize(new ArrayList<String>())));
+                memorablePlacesLng=
+                        (ArrayList<String>) ObjectSerializer.deserialize(sharedPreferences.getString("memorablePlacesLng",ObjectSerializer.serialize(new ArrayList<String>())));
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
 
         //  Defning the memorablePlacesListView and populating it with arrayList.
         memorablePlacesListView = findViewById(R.id.listview);
